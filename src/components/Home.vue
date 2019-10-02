@@ -23,6 +23,7 @@
           :collapse="isCollapsed"
           :collapse-transition="false"
           router
+          :default-active="activeIndex"
         >
           <!-- 一级菜单 -->
           <el-submenu :index="item.id+''" v-for="item in menuList" :key="item.id">
@@ -37,6 +38,7 @@
               :index="'/'+subItem.path"
               v-for="subItem in item.children"
               :key="subItem.id"
+              @click="saveActiveState('/'+subItem.path)"
             >
               <template slot="title">
                 <!-- 图标 -->
@@ -71,7 +73,9 @@ export default {
         '145': 'iconfont icon-icon-test'
       },
       // 是否折叠菜单
-      isCollapsed: false
+      isCollapsed: false,
+      // 当前激活菜单的 index
+      activeIndex: ''
     }
   },
   methods: {
@@ -84,8 +88,12 @@ export default {
     },
     // 折叠菜单
     toggleCollapse() {
-      console.log('toggleCollapse')
       this.isCollapsed = !this.isCollapsed
+    },
+    // 保存当前激活菜单的index到sessionStorage
+    saveActiveState(index) {
+      this.activeIndex = index
+      window.sessionStorage.activeIndex = index
     }
   },
   // 获取左侧菜单数据
@@ -97,7 +105,9 @@ export default {
     }
     // 将获取的数据保存在本组件
     this.menuList = res.data
-    console.log(this.menuList)
+    // console.log(this.menuList)
+    // 更新当前激活菜单的index
+    this.activeIndex = window.sessionStorage.getItem('activeIndex')
   }
 }
 </script>
@@ -148,5 +158,6 @@ export default {
   color: #fff;
   line-height: 26px;
   cursor: pointer;
+  letter-spacing: 0.2em;
 }
 </style>
